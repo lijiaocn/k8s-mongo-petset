@@ -1,0 +1,166 @@
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  annotations:
+    pv.kubernetes.io/bound-by-controller: "yes"
+  labels:
+    namespace: lijiaob
+  name: lijiaob-mongo-service-2
+spec:
+  accessModes:
+  - ReadWriteOnce
+  capacity:
+    storage: 1Gi
+  rbd:
+    fsType: ext4
+    image: lijiaob-mongo-service-2
+    keyring: /etc/ceph/ceph.client.admin.keyring
+    monitors:
+    - 10.39.0.114:6789
+    - 10.39.0.115:6789
+    - 10.39.0.116:6789
+    pool: pool
+    user: admin
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  annotations:
+    pv.kubernetes.io/bound-by-controller: "yes"
+  labels:
+    namespace: lijiaob
+  name: lijiaob-mongo-service-1
+spec:
+  accessModes:
+  - ReadWriteOnce
+  capacity:
+    storage: 1Gi
+  rbd:
+    fsType: ext4
+    image: lijiaob-mongo-service-1
+    keyring: /etc/ceph/ceph.client.admin.keyring
+    monitors:
+    - 10.39.0.114:6789
+    - 10.39.0.115:6789
+    - 10.39.0.116:6789
+    pool: pool
+    user: admin
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  annotations:
+    pv.kubernetes.io/bound-by-controller: "yes"
+  labels:
+    namespace: lijiaob
+  name: lijiaob-mongo-service-0
+spec:
+  accessModes:
+  - ReadWriteOnce
+  capacity:
+    storage: 1Gi
+  rbd:
+    fsType: ext4
+    image: lijiaob-mongo-service-0
+    keyring: /etc/ceph/ceph.client.admin.keyring
+    monitors:
+    - 10.39.0.114:6789
+    - 10.39.0.115:6789
+    - 10.39.0.116:6789
+    pool: pool
+    user: admin
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: mongo-service
+  namespace: lijiaob
+type: Opaque
+data:
+    keyfile: d0NMU2dhVTY0V3Z3a0xxbVZaVHJ4elR1Rm9NZHVFcjZwR3loMUU5R2JuUjFDVHl1WlBPVkpJT2IxaVQ1QXdkegpja3hMY1BuMUlUUDVwb05STEFpdzFjenlxSlRjNHdaN3c2bC9NNzRVNFpmeHdtOVpuL3dxZjJvOCtZS0JKeXY4CjMzSVQyTWdmdTh3ZG55dmVmbU41cE9OVkNWTC9qRnNVWUdPYkp5cFdOS0xLYi8xcmUzZ1hxOU1yVUZraVpEK2sKMURJOHVVdHQ0b2RCOCtQamJiYXNTeFgzT3ZDNWpCWEdOSWdKeisraWhmZXVMbExEbm05dElUWGVpa3JWWEorWQpQYlBOVG1IK2x1cDJicjZPL0o0OTFUYTROS09HcmRBbzZDTkhNZWxHQjlxNUJadUwrUG9adm9xU2lPb1A4aGFrCjEwWWFEb3p0OHJuVmtwYVNuL212bGRRRDY4Zkt4Nm5pSzg3YkN2T2VqQkJpS0c2ekZydHhZSWs4ekl2N0puNmYKT242SVBmeGZUTjdkdk5TaWVBaGlLa0xuR0kwS0Z3OHVQMVE1bzBrL3F4c05LL0ZQdnFYZ1pXL2orSE0wMS91UgpIS3BmSy8vWmRPdVNNRHYyRzVva3JoMlRmUnptdi82cDVxaU9VQlE2eHZmYWQvYkVDczI5ZmtQV2VIckwzWnhkCkZRcUg0bWZkWmR1MTVNY3JBOFdFSkw5T2tvSGtHZzk2c0pOM0poWnRDeXUrQTRaRnNLbzZCQW5RMnZSR2NZeEIKcmFLaFp4SkI4RFNDWXlzQkZxT2txaEU3QWU1MmFvM0NxWEdTR2Z3aXRRRktSSVhiMS9GMS9Dc1dmYTJwalRmOAo2Vy85QU4vZEU3OE1Gek1mdERpcms5S1ZNVGg5NGZVdGd6MXVoUGUyYjlVS1dBbzFTVFZ4UVFlUlh2WEpBSFZuCkZ3NnJWTlNQbVVOV0JqOTkyZGFZdjhBVGZhTnRkNzgwTE13MGljN2laRkV0Y09mOHlreS9SeG1mWHdENTFwU0wKTDUvaUE3anVvZjEvWHJwRGFIOTM5SnRSNXh0cmkzZ0J4TXVIOThrRTlRRDZ5aWxTZHdHU2o2N1lDbWx2dHRMTQp6RlArNTNpdGxMaTFTTWE1Ly91VmlmTGMrYjJXaDliVHNwNDU5TVM1YWttTXlRS05KU2dMRytFeUJacTk3dHJyCmpQdjZxSzZzd0xRNUo4NXpMY1FObDNBMmkyTEpuNGpxR2ZRdXBmUG9nc3VHUHFJV3FTWk9INHU2bXUvQ29OWEQKYm42eEZ1OXRRTVFUL0k3dGFCaGt6YzZjT0dBNmZ2Q0JVWi9IRk8vcStmamZyWDN6Cg==
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongo-service
+  namespace: lijiaob
+  labels:
+    name: mongo-service
+spec:
+  ports:
+  - port: 27017
+    targetPort: 27017
+  clusterIP: None
+  selector:
+    role: mongo-service-mongod
+    petset: mongo-service
+---
+apiVersion: apps/v1alpha1
+kind: PetSet
+metadata:
+  name: mongo-service
+  namespace: lijiaob
+spec:
+  replicas: 3
+  serviceName: mongo-service
+  template:
+    metadata:
+      annotations:
+        pod.alpha.kubernetes.io/initialized: "true"
+        pod.alpha.kubernetes.io/init-containers: '[{"name":"install","image":"example.lijiaocn.com/lijiaob/mongo-init:latest","imagePullPolicy":"Always","env":[{"name":"DELETE_EXSITING_DATA","value":"yes"},{"name":"MONGODB_HIDDEN_USER","value":"forbiddenchangesystem"},{"name":"MONGODB_HIDDEN_PWD","value":"123456"},{"name":"MONGODB_DEF_USER","value":"admin"},{"name":"MONGODB_DEF_PWD","value":"admin"}],"volumeMounts":[{"name":"mongo-persistent-storage","mountPath":"/data/db"}]}]'
+      labels:
+        role: mongo-service-mongod
+        petset: mongo-service
+    spec:
+      terminationGracePeriodSeconds: 0
+      containers:
+        - name: mongo
+          image: example.lijiaocn.com/lijiaob/mongo:latest
+          command:
+            - mongod
+            - "--keyFile"
+            - "/run/keyfile"
+            - "--auth"
+            - "--replSet"
+            - rs0
+            - "--smallfiles"
+            - "--noprealloc"
+          ports:
+            - containerPort: 27017
+          volumeMounts:
+            - name: mongo-persistent-storage
+              mountPath: /data/db
+            - name: keyfile
+              mountPath: /run
+              readOnly: false
+        - name: mongo-sidecar
+          image: example.lijiaocn.com/lijiaob/mongo-k8s-sidecar:latest
+          env:
+            - name: MONGO_SIDECAR_POD_LABELS
+              value: "petset=mongo-service,role=mongo-service-mongod"
+            - name: KUBERNETES_MONGO_SERVICE_NAME
+              value: "mongo-service"
+            - name: KUBE_NAMESPACE
+              value: "lijiaob"
+            - name: KUBERNETES_CLUSTER_DOMAIN
+              value: "cluster.local"
+            - name: MONGODB_USERNAME
+              value: "forbiddenchangesystem"
+            - name: MONGODB_PASSWORD
+              value: "123456"
+            - name: MONGODB_DATABASE
+              value: "admin"
+      volumes:
+        - name: keyfile
+          secret:
+             secretName: mongo-service
+             defaultMode: 256
+  volumeClaimTemplates:
+  - metadata:
+      name: mongo-persistent-storage
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 1Gi

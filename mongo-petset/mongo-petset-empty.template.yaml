@@ -1,0 +1,62 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{SERVICE_NAME}}
+  namespace: {{NAMESPACE}}
+  labels:
+    name: {{SERVICE_NAME}}
+spec:
+  ports:
+  - port: 27017
+    targetPort: 27017
+  clusterIP: None
+  selector:
+    role: {{SERVICE_NAME}}-mongod
+    petset: {{SERVICE_NAME}}
+---
+apiVersion: apps/v1alpha1
+kind: PetSet
+metadata:
+  name: {{SERVICE_NAME}}
+  namespace: {{NAMESPACE}}
+spec:
+  replicas: {{REPLICAS}}
+  serviceName: {{SERVICE_NAME}}
+  template:
+    metadata:
+      annotations:
+        pod.alpha.kubernetes.io/initialized: "true"
+      labels:
+        role: {{SERVICE_NAME}}-mongod
+        petset: {{SERVICE_NAME}}
+    spec:
+      terminationGracePeriodSeconds: 0
+      containers:
+        - name: mongo
+          image: example.lijiaocn.com/lijiaocn/mongo:latest
+          command:
+            - mongod
+            - "--replSet"
+            - rs0
+            - "--smallfiles"
+            - "--noprealloc"
+          ports:
+            - containerPort: 27017
+          volumeMounts:
+            - name: mongo-empty-storage
+              mountPath: /data/db
+        - name: mongo-sidecar
+          image: example.lijiaocn.com/lijiaocn/mongo-k8s-sidecar:latest
+          env:
+            - name: MONGO_SIDECAR_POD_LABELS
+              value: "petset={{SERVICE_NAME}},role={{SERVICE_NAME}}-mongod"
+            - name: KUBERNETES_MONGO_SERVICE_NAME
+              value: "{{SERVICE_NAME}}"
+            - name: KUBE_NAMESPACE
+              value: "{{NAMESPACE}}"
+            - name: KUBERNETES_CLUSTER_DOMAIN
+              value: "{{CLUSTER_DOMAIN}}"
+      volumes:
+        - name: mongo-empty-storage
+          emptyDir: {}
